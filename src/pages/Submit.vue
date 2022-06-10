@@ -1,0 +1,3 @@
+<template>
+   <FrontLayout></FrontLayout> 
+</template>
