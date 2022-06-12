@@ -23,20 +23,24 @@ export default {
             detailShow: false,
             caffess,
             detailsData: {},
-            detailsDataFeature: {}
+            detailsDataFeature: {},
+            filterInput: {}
         }
     },
     components: { ExploreItem, IconGoogleMap, IconInstagram, IconClose, IconPin, FeatureCheckList, IconAlcohol, IconFlower, IconSmoking, IconPowerSource, IconTable, IconWIfi, IconEggs, IconDiapers, IconMeeting, IconCoffee, SearchForm },
     methods: {
-        hello(index) {
-            this.detailsData = this.caffess[index];
+        sidebarDetail(data) {
+            this.detailsData = data;
             this.detailShow = true;
+        },
+        updateFilter(data){
+            this.filterInput = data;
         }
     },
     emits() {
-        'showDetail'
+        'showDetail',
+        'filterChanges'
     }
-
 }
 
 </script>
@@ -45,29 +49,34 @@ export default {
     <FrontLayout>
         <div :class="['flex flex-row ']">
             <div :class="[' px-4 mt-20 flex flex-col w-full ']">
-                <SearchForm />
+                <!-- Search Form -->
+                <SearchForm v-on:filterChanges="updateFilter"/>
+
+                <!-- Explore Item -->
                 <div class="grid grid-cols-1 md:grid-col-2 lg:grid-cols-3 gap-4 my-5">
-                    <ExploreItem :data="caffess" v-on:showDetail="hello" />
+                    <ExploreItem v-on:showDetail="sidebarDetail" :filter="filterInput" />
                 </div>
             </div>
 
-            <div v-show="detailShow && detailsData.features"
-                :class="['w-[20rem] p-4 z-50 bg-white shadow-md h-screen fixed right-0 flex flex-col']">
+            <!-- Details Panel -->
+            <div id="detailPanel" v-show="detailShow && detailsData"
+                class="w-[20rem] p-4 z-50 bg-white shadow-md h-screen fixed right-0 flex flex-col overflow-x-hidden overflow-y-scroll">
                 <div class="flex justify-end">
                     <button class=" bg-white w-max ml-[auto] hover:text-purple-700" v-on:click="detailShow = false">
                         <IconClose class="h-4 w-4" />
                     </button>
                 </div>
-                <h3 class="text-2xl mt-4 font-bold text-center text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-purple-600" v-text="detailsData.name"></h3>
-                <span class="text-sm text-gray-400 text-center" v-text="detailsData.address"></span>
+                <h3 class="text-2xl mt-4 font-bold text-center text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-purple-600 line-clamp-1"
+                    v-text="detailsData.name"></h3>
+                <span class="text-sm text-gray-400 text-center line-clamp-2" v-text="detailsData.address"></span>
 
                 <div class="flex flex-row justify-evenly mt-4">
                     <a class="px-2 py-2 rounded-full border focus:text-white focus:bg-purple-700 focus:ring-2 focus:ring-purple-300"
-                        href="#">
+                        :href="detailsData.google_map" target="_blank">
                         <IconGoogleMap class="h-4 w-4" />
                     </a>
                     <a class="px-2 py-2 rounded-full border focus:text-white focus:bg-purple-700 focus:ring-2 focus:ring-purple-300"
-                        href="#">
+                        :href="detailsData.instagram" target="_blank">
                         <IconInstagram class="h-4 w-4" />
                     </a>
 
@@ -77,35 +86,35 @@ export default {
                     </a>
                 </div>
 
-                <div class="flex flex-col mt-7" v-if="detailsData.features">
-                    <FeatureCheckList :avail="detailsData.features.diapersFriendly" label="Ramah Uang Popok">
+                <div class="flex flex-col mt-7" v-if="detailsData">
+                    <FeatureCheckList :avail="detailsData.diapersFriendly" label="Ramah Uang Popok">
                         <IconDiapers class="h-4 w-4" />
                     </FeatureCheckList>
-                    <FeatureCheckList :avail="detailsData.features.goodCoffee" label="Kopinya Mantep">
+                    <FeatureCheckList :avail="detailsData.goodCoffee" label="Kopinya Mantep">
                         <IconCoffee class="h-4 w-4" />
                     </FeatureCheckList>
-                    <FeatureCheckList :avail="detailsData.features.mainfood" label="Makanan Beratnya Enak">
+                    <FeatureCheckList :avail="detailsData.mainfood" label="Makanan Beratnya Enak">
                         <IconEggs class="h-4 w-4" />
                     </featurechecklist>
-                    <FeatureCheckList :avail="detailsData.features.meetings" label="Enak Buat Meeting">
+                    <FeatureCheckList :avail="detailsData.meetings" label="Enak Buat Meeting">
                         <IconMeeting class="h-4 w-4" />
                     </FeatureCheckList>
-                    <FeatureCheckList :avail="detailsData.features.wifi" label="WiFi Kenceng">
+                    <FeatureCheckList :avail="detailsData.wifi" label="WiFi Kenceng">
                         <IconWIfi class="h-4 w-4" />
                     </FeatureCheckList>
-                    <FeatureCheckList :avail="detailsData.features.workingTable" label="Meja Kerja Ergonomis">
+                    <FeatureCheckList :avail="detailsData.workingTable" label="Meja Kerja Ergonomis">
                         <IconTable class="h-4 w-4" />
                     </FeatureCheckList>
-                    <FeatureCheckList :avail="detailsData.features.powerSource" label="Colokan Everywhere">
+                    <FeatureCheckList :avail="detailsData.powerSource" label="Colokan Everywhere">
                         <IconPowerSource class="h-4 w-4" />
                     </FeatureCheckList>
-                    <FeatureCheckList :avail="detailsData.features.smokingArea" label="Bisa Ngerokok">
+                    <FeatureCheckList :avail="detailsData.smokingArea" label="Bisa Ngerokok">
                         <IconSmoking class="h-4 w-4" />
                     </FeatureCheckList>
-                    <FeatureCheckList :avail="detailsData.features.greenView" label="Pemandangan Adem">
+                    <FeatureCheckList :avail="detailsData.greenView" label="Pemandangan Adem">
                         <IconFlower class="w-4 h-4" />
                     </FeatureCheckList>
-                    <FeatureCheckList :avail="detailsData.features.alcohol" label="Alkohol Tipis-Tipis">
+                    <FeatureCheckList :avail="detailsData.alcohol" label="Alkohol Tipis-Tipis">
                         <IconAlcohol class="w-4 h-4" />
                     </FeatureCheckList>
                 </div>
