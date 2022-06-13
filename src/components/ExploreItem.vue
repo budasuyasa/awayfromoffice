@@ -18,7 +18,9 @@ export default {
                     }
                 });
                 if (status == 200) {
-                    this.data = data.data;
+                    this.data = data.data
+                } else {
+                    console.log("Network error")
                 }
             } catch (error) {
                 console.error(error);
@@ -33,7 +35,7 @@ export default {
             handler(newFilter, oldFilter) {
                 setTimeout(() => {
                     this.getData(newFilter);
-                }, 1000);
+                }, 200);
             },
             deep: true
         }

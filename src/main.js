@@ -40,4 +40,5 @@ app.use(router)
 app.component('FrontLayout', FrontLayout);
 app.component('font-awesome-icon', FontAwesomeIcon)
 
+
 app.mount("#app")
