@@ -1,7 +1,15 @@
 <script>
 import axios from 'axios';
 import config from '../data/config';
+import { useStore } from '@/stores/main'
 export default {
+    setup() {
+        const store = useStore()
+
+        return {
+            store
+        }
+    },
     data() {
         return {
             data: []
@@ -12,13 +20,14 @@ export default {
     methods: {
         getData: async function (filter) {
             try {
-                const { data, status } = await axios.get(config.apiUrl + '/api/places', { params:  filter  }, {
+                const { data, status } = await axios.get(config.apiUrl + '/api/places', { params: filter }, {
                     headers: {
                         'Content-Type': 'application/json'
                     }
                 });
                 if (status == 200) {
                     this.data = data.data
+                    this.store.$patch({ isLoading: false, isNewPlaceSubmited: false, newPlaceData: {} })
                 } else {
                     console.log("Network error")
                 }
@@ -31,11 +40,19 @@ export default {
         this.getData(null);
     },
     watch: {
-        filter: {
-            handler(newFilter, oldFilter) {
+        "store.filterInput": {
+            handler(newValue, oldStore) {
                 setTimeout(() => {
-                    this.getData(newFilter);
+                    this.getData(newValue);
                 }, 200);
+            },
+            deep: true
+        },
+        "store.newPlaceData": {
+            handler(newData){
+                if(newData){
+                    this.getData({keyword: newData.name})
+                }
             },
             deep: true
         }

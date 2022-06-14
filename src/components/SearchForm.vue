@@ -3,14 +3,19 @@ import IconFilter from '@/components/icons/IconFilter.vue';
 import IconClose from './icons/IconClose.vue';
 import IconUp from './icons/IconUp.vue';
 import filterItem from '../data/feature_list.js';
-
+import { useStore } from '@/stores/main'
 
 export default {
+    setup(){
+        const store = useStore()
+        return {
+            store
+        }
+    },
     data() {
         return {
-            showFilter: false,
             filterItem,
-            filterInput: {}
+            showFilter: false,
 
         }
     },
@@ -22,27 +27,13 @@ export default {
         checkKeyword: function () {
             console.log(this.keyword);
         },
-        updateFilter(){
-            this.$emit('filterChanges', this.filterInput)
-        }
     },
     mounted() {
         let _filterInput = { keyword: '' };
         for (let i = 0; i < this.filterItem.length; i++) {
             _filterInput[this.filterItem[i].value] = false;
         }
-        this.filterInput = _filterInput;
-
     },
-    emits: ['filterChanges'],
-    watch: {
-        filterInput: {
-            handler(newData) {
-                this.updateFilter();
-            },
-            deep: true
-        }
-    }
 
 }
 </script>
@@ -57,14 +48,14 @@ export default {
 
             <input type="text" placeholder="Cari Caffee..." name="keyword" autocomplete="off"
                 class="w-full bg-white h-[3rem] px-4 border rounded-md focus:outline-none focus:shadow-md"
-                v-model="filterInput['keyword']" />
+                v-model="store.filterInput.keyword" />
 
         </div>
 
         <div class="flex flex-col flex-wrap md:grid md:grid-cols-4 lg:grid lg:grid-cols-5 mt-4 " v-if="showFilter">
             <div class="flex flex-row items-center text-sm mr-2 mb-3" v-for="(item, index) in filterItem"
                 :key="item.id">
-                <input :id="item.id" type="checkbox" :name="item.value" v-model="filterInput[item.value]" />
+                <input :id="item.id" type="checkbox" :name="item.value" v-model="store.filterInput[item.value]" />
                 <label :for="item.id" class="mx-1 text-gray-600">{{ item.label }}</label>
             </div>
         </div>

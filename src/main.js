@@ -2,6 +2,8 @@ import { createApp } from "vue";
 import App from './App.vue';
 import {createRouter, createWebHistory}  from 'vue-router'
 import FrontLayout from '@/layouts/Front.vue';
+import { createPinia } from 'pinia'
+
 
 import "./assets/index.css";
 
@@ -36,6 +38,7 @@ const router = createRouter({
 library.add(faUserSecret)
 
 const app = createApp(App)
+app.use(createPinia())
 app.use(router)
 app.component('FrontLayout', FrontLayout);
 app.component('font-awesome-icon', FontAwesomeIcon)

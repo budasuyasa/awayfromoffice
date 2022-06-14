@@ -16,7 +16,8 @@ export default {
         isActive(path) {
             return this.$route.name == path;
         },
-    }
+    },
+
 }
 </script>
 
@@ -40,7 +41,7 @@ export default {
             Tempat</button>
     </nav>
 
-    <AddPlace :show="showAddModal" v-on:close-modal="showAddModal = false" />
+    <AddPlace :show="showAddModal" v-on:close-modal="showAddModal = false"  v-on:new-place-submited="showAddModal = false"/>
 </template>
 <style>
 </style>

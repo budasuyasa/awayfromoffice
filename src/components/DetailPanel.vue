@@ -14,7 +14,14 @@ import IconEggs from '../components/icons/IconEggs.vue';
 import IconDiapers from '../components/icons/IconDiapers.vue';
 import IconMeeting from '../components/icons/IconMeeting.vue';
 import IconCoffee from '../components/icons/IconCoffee.vue';
+import { useStore } from '@/stores/main'
 export default {
+    setup() {
+        const store = useStore()
+        return {
+            store
+        }
+    },
     props: {
         data: Object,
         show: Boolean
@@ -42,7 +49,7 @@ export default {
         IconMeeting, 
         IconCoffee 
     },
-    emits: ['hidePanel'],
+    emits: ['hidePanel','showPanel'],
     watch: {
         data: {
             handler(newData) {
@@ -52,8 +59,22 @@ export default {
         },
         show: {
             handler(newData) {
+                console.log("show? ", newData)
                 this.isShow = newData;
             }
+        },
+        "store.newPlaceData":{
+            handler(data){
+                if(Object.keys(data).length !== 0){
+                    this.detailsData = data
+                    console.log(this.detailsData)
+                    this.$emit('showPanel');
+                    console.log(this.detailsData)
+                    this.store.$patch({ isLoading: false, isNewPlaceSubmited: false, newPlaceData: {}, filterInput: {keyword: data.name}  })
+                }
+            },
+            deep: true
+
         }
     }
 }
@@ -67,16 +88,16 @@ export default {
             </button>
         </div>
         <h3 class="text-2xl mt-4 font-bold text-center text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-purple-600 line-clamp-1"
-            v-text="data.name"></h3>
-        <span class="text-sm text-gray-400 text-center line-clamp-2" v-text="data.address"></span>
+            v-text="detailsData.name"></h3>
+        <span class="text-sm text-gray-400 text-center line-clamp-2" v-text="detailsData.address"></span>
 
         <div class="flex flex-row justify-evenly mt-4">
             <a class="px-2 py-2 rounded-full border focus:text-white focus:bg-purple-700 focus:ring-2 focus:ring-purple-300"
-                :href="data.google_map" target="_blank">
+                :href="detailsData.google_map" target="_blank">
                 <IconGoogleMap class="h-4 w-4" />
             </a>
             <a class="px-2 py-2 rounded-full border focus:text-white focus:bg-purple-700 focus:ring-2 focus:ring-purple-300"
-                :href="data.instagram" target="_blank">
+                :href="detailsData.instagram" target="_blank">
                 <IconInstagram class="h-4 w-4" />
             </a>
             <a class="px-2 py-2 rounded-full border focus:text-white focus:bg-purple-700 focus:ring-2 focus:ring-purple-300"
@@ -86,34 +107,34 @@ export default {
         </div>
 
         <div class="flex flex-col mt-7" v-if="data">
-            <FeatureCheckList :avail="data.diapersFriendly" label="Ramah Uang Popok">
+            <FeatureCheckList :avail="detailsData.diapersFriendly" label="Ramah Uang Popok">
                 <IconDiapers class="h-4 w-4" />
             </FeatureCheckList>
-            <FeatureCheckList :avail="data.goodCoffee" label="Kopinya Mantep">
+            <FeatureCheckList :avail="detailsData.goodCoffee" label="Kopinya Mantep">
                 <IconCoffee class="h-4 w-4" />
             </FeatureCheckList>
-            <FeatureCheckList :avail="data.mainfood" label="Makanan Beratnya Enak">
+            <FeatureCheckList :avail="detailsData.mainfood" label="Makanan Beratnya Enak">
                 <IconEggs class="h-4 w-4" />
             </featurechecklist>
-            <FeatureCheckList :avail="data.meetings" label="Enak Buat Meeting">
+            <FeatureCheckList :avail="detailsData.meetings" label="Enak Buat Meeting">
                 <IconMeeting class="h-4 w-4" />
             </FeatureCheckList>
-            <FeatureCheckList :avail="data.wifi" label="WiFi Kenceng">
+            <FeatureCheckList :avail="detailsData.wifi" label="WiFi Kenceng">
                 <IconWIfi class="h-4 w-4" />
             </FeatureCheckList>
-            <FeatureCheckList :avail="data.workingTable" label="Meja Kerja Ergonomis">
+            <FeatureCheckList :avail="detailsData.workingTable" label="Meja Kerja Ergonomis">
                 <IconTable class="h-4 w-4" />
             </FeatureCheckList>
-            <FeatureCheckList :avail="data.powerSource" label="Colokan Everywhere">
+            <FeatureCheckList :avail="detailsData.powerSource" label="Colokan Everywhere">
                 <IconPowerSource class="h-4 w-4" />
             </FeatureCheckList>
-            <FeatureCheckList :avail="data.smokingArea" label="Bisa Ngerokok">
+            <FeatureCheckList :avail="detailsData.smokingArea" label="Bisa Ngerokok">
                 <IconSmoking class="h-4 w-4" />
             </FeatureCheckList>
-            <FeatureCheckList :avail="data.greenView" label="Pemandangan Adem">
+            <FeatureCheckList :avail="detailsData.greenView" label="Pemandangan Adem">
                 <IconFlower class="w-4 h-4" />
             </FeatureCheckList>
-            <FeatureCheckList :avail="data.alcohol" label="Alkohol Tipis-Tipis">
+            <FeatureCheckList :avail="detailsData.alcohol" label="Alkohol Tipis-Tipis">
                 <IconAlcohol class="w-4 h-4" />
             </FeatureCheckList>
         </div>

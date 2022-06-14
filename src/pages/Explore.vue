@@ -3,7 +3,17 @@ import ExploreItem from '@/components/ExploreItem.vue';
 import caffess from '../data/dummy.js';
 import SearchForm from '../components/SearchForm.vue';
 import DetailPanel from '../components/DetailPanel.vue'
+import { useStore } from '@/stores/main'
 export default {
+    setup(){
+        const store = useStore()
+
+       
+
+        return {
+            store
+        }
+    },
     data() {
         return {
             detailShow: false,
@@ -32,7 +42,7 @@ export default {
 </script>
 
 <template>
-    <FrontLayout>
+    <FrontLayout v-slot="slotProps">
         <div :class="['flex flex-row ']">
             <div :class="[' px-4 mt-20 flex flex-col w-full ']">
                 <!-- Search Form -->
@@ -43,9 +53,8 @@ export default {
                     <ExploreItem v-on:showDetail="sidebarDetail" :filter="filterInput" />
                 </div>
             </div>
-
             <!-- Details Panel -->
-            <DetailPanel :show="detailShow" :data="detailsData" v-on:hidePanel="detailShow = false" />
+            <DetailPanel :show="detailShow" :data="detailsData" v-on:hidePanel="detailShow = false" v-on:showPanel="detailShow = true" />
 
         </div>
     </FrontLayout>
